@@ -39,7 +39,17 @@
       el('camera-preview').style.transform=el('facing').value==='user'?'scaleX(-1)':'none';
       for(const track of stream.getTracks())track.addEventListener('ended',()=>{finish();release();message('Camera or microphone disconnected. Any captured take will appear below.');});
       await el('camera-preview').play().catch(()=>{});message('Camera ready. Record & read starts after your selected countdown.');
-    }catch(error){release();message(error.name==='NotAllowedError'?'Camera or microphone permission denied. Allow both in your browser’s site settings and try again.':'Unable to open camera and microphone. Check that they are connected and not in use by another app.');}
+    }catch(error){
+      release();
+      const errors={
+        NotAllowedError:'Camera or microphone permission denied. Allow both in your browser’s site settings, then try again. If using an embedded browser, open this app directly in Safari or Chrome.',
+        NotFoundError:'No camera or microphone was found. Connect both devices, or open this app on your phone.',
+        NotReadableError:'Your camera or microphone is busy or blocked by the operating system. Close other camera apps and check device privacy settings, then try again.',
+        OverconstrainedError:'This camera cannot use the requested settings. Try the front camera or another device.',
+        SecurityError:'The browser blocked camera access. Open the HTTPS app directly in Safari or Chrome.'
+      };
+      message(errors[error.name] || `Unable to open camera and microphone (${error.name || 'unknown error'}). Open the app directly in Safari or Chrome and check device permissions.`);
+    }
     finally{opening=false;controls();}
   });
   el('record').addEventListener('click',()=>{

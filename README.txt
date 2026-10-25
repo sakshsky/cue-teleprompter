@@ -28,3 +28,6 @@ supported by your browser. Long recordings may use substantial device memory.
 No npm packages, API keys or external media services are needed.
 Tests (Node.js): node --test recording.test.cjs
 Tests mock browser media APIs; real camera/mic behavior needs device testing.
+
+Camera overlay update: live camera fills the reading area behind the scrolling text, including Focus mode. A dark tint and text shadow improve readability. The downloaded video does not contain script text.
+
