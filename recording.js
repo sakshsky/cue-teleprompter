@@ -4,6 +4,24 @@
   let stream=null, recorder=null, pending=false, opening=false, finalizing=false;
   let elapsedTimer=null, started=0, count=0;
   const urls=[];
+  let ownsFullscreen=false, immersive=false;
+  function enterStudio(){
+    immersive=true;
+    document.body.classList.add('recording-session');
+    // Request during the Record button gesture. CSS remains the fallback on phones.
+    if(!document.fullscreenElement && document.documentElement.requestFullscreen){
+      document.documentElement.requestFullscreen().then(()=>{
+        ownsFullscreen=true;
+        if(!immersive)leaveStudio();
+      }).catch(()=>{});
+    }
+  }
+  function leaveStudio(){
+    immersive=false;
+    document.body.classList.remove('recording-session');
+    if(ownsFullscreen && document.fullscreenElement)document.exitFullscreen().catch(()=>{});
+    ownsFullscreen=false;
+  }
   const message=text => { el('record-status').textContent=text; };
   const active=()=>recorder && recorder.state!=='inactive';
   function controls(){
@@ -16,6 +34,7 @@
   function release(){if(stream)stream.getTracks().forEach(track=>track.stop());stream=null;el('camera-preview').srcObject=null;el('camera-preview').hidden=true;controls();}
   function finish(){
     pending=false;
+    leaveStudio();
     if(active()){finalizing=true;recorder.stop();message('Preparing your video…');}
     clearInterval(elapsedTimer); stop(); controls();
   }
@@ -55,9 +74,9 @@
   el('record').addEventListener('click',()=>{
     if(!stream || active() || finalizing)return;
     if(!el('script').value.trim()){message('Add a script before recording.');return;}
-    stop();pending=true;controls();message('Get ready — recording begins with the scrolling text.');play();
+    stop();enterStudio();pending=true;controls();message('Get ready — recording begins with the scrolling text.');play();
   });
-  document.addEventListener('cue:pause',()=>{if(pending){pending=false;message('Recording countdown cancelled.');controls();}});
+  document.addEventListener('cue:pause',()=>{if(pending){pending=false;leaveStudio();message('Recording countdown cancelled.');controls();}});
   document.addEventListener('cue:begin',()=>{
     if(!pending)return;pending=false;
     const chunks=[];
@@ -69,7 +88,7 @@
       current.onerror=()=>{message('Recording was interrupted. Recovering available video…');finish();};
       current.start(1000);started=Date.now();message('● REC 00:00 — camera and microphone recording');
       elapsedTimer=setInterval(()=>{const seconds=Math.floor((Date.now()-started)/1000);message(`● REC ${String(Math.floor(seconds/60)).padStart(2,'0')}:${String(seconds%60).padStart(2,'0')} — camera and microphone recording`);if(seconds>=600)finish();},500);
-    }catch{message('This browser could not start recording. Try the app in Safari or Chrome.');}
+    }catch{leaveStudio();message('This browser could not start recording. Try the app in Safari or Chrome.');}
     controls();
   });
   el('record-stop').addEventListener('click',finish);

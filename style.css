@@ -14,3 +14,35 @@
 .focus .reading-frame{flex:1 1 0;min-height:120px}
 .focus #viewport{position:absolute;inset:0;height:100%}
 
+/* Studio finish: soft surfaces and a clear primary recording action. */
+body{background:radial-gradient(ellipse at 70% 0%,#243020 0,transparent 52%),#101311}
+.editor,.settings{background:linear-gradient(145deg,#20271e,#171d17);box-shadow:0 12px 40px #0002}
+.prompter{box-shadow:0 20px 65px #0004;border-color:#46503d}
+button{transition:background .15s ease,box-shadow .15s ease}
+button:hover:not(:disabled){box-shadow:0 0 0 1px #d6f79666}
+.record-controls{align-items:center;gap:10px}
+.record-controls button{min-height:44px}
+#record:not(:disabled){font-weight:700;padding:12px 20px;border-color:#d6f796}
+#record-status{line-height:1.5}.recording{background:#141a12}
+/* Edge-to-edge recording studio: camera + script, pause, and stop only. */
+body.recording-session{overflow:hidden;background:#000}
+.recording-session .prompter{position:fixed;inset:0;z-index:100;width:100%;height:100dvh;border:0;border-radius:0;padding:0;background:#000}
+.recording-session header,.recording-session .intro,.recording-session .editor,.recording-session .settings,.recording-session footer,.recording-session main>#status{display:none}
+.recording-session .reading-frame{position:absolute;inset:0;min-height:0;height:100%;width:100%;flex:none}
+.recording-session #viewport{position:absolute;inset:0;height:100%;width:100%;mask-image:linear-gradient(transparent 6%,#000 20%,#000 72%,transparent 89%)}
+.recording-session #reading{max-width:900px;margin:0 auto;padding:24dvh 7% 75dvh;line-height:1.6}
+.recording-session .guide{top:calc(24dvh + 12px);left:3%}
+.recording-session .screen-top{position:absolute;top:env(safe-area-inset-top,0px);left:0;right:0;z-index:5;padding:22px 26px;background:linear-gradient(#0007,transparent);pointer-events:none}
+.recording-session #exit,.recording-session .progress,.recording-session #reset,.recording-session #mirror{display:none}
+.recording-session .transport{position:absolute;bottom:calc(22px + env(safe-area-inset-bottom,0px));left:50%;transform:translateX(-100%);z-index:7;margin:0;padding:0 6px}
+.recording-session .play{background:#172016d9;color:#fff;border:1px solid #ffffff50;backdrop-filter:blur(14px);min-width:145px;border-radius:50px;padding:15px 20px}
+.recording-session .recording{position:static;background:none;border:0;padding:0;max-height:none;overflow:visible}
+.recording-session .record-controls{position:absolute;bottom:calc(22px + env(safe-area-inset-bottom,0px));left:50%;z-index:7;padding:0 6px}
+.recording-session .record-controls>:not(#record-stop){display:none}
+.recording-session #record-stop{background:#ea5454;color:#fff;border:1px solid #ff9797;border-radius:50px;font-weight:700;min-width:145px;padding:15px 20px;white-space:nowrap}
+.recording-session #record-status{position:absolute;z-index:6;top:calc(58px + env(safe-area-inset-top,0px));left:50%;transform:translateX(-50%);max-width:90%;width:max-content;border:1px solid #ffffff26;border-radius:30px;background:#0008;color:#fff;padding:8px 16px;font-size:11px;backdrop-filter:blur(10px);text-align:center}
+.recording-session .record-help,.recording-session #takes{display:none}
+.recording-session .camera-shade{background:linear-gradient(#0004,transparent 35%,#0002 65%,#0008)}
+.recording-session #countdown{background:#0005;font-size:clamp(90px,18vw,180px);font-weight:700}
+@media(max-height:500px){.recording-session #record-status{top:0}.recording-session .transport,.recording-session .record-controls{bottom:10px}.recording-session #reading{padding-top:25dvh}.recording-session .screen-top{padding:14px}}
+@media(prefers-reduced-motion:reduce){button{transition:none}}
